@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>windows下hexo个人博客搭建</title>
+    <url>/2022/08/17/windows%E4%B8%8Bhexo%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>刚搭建的一个个人博客，想写点东西，专业知识感觉不知道写点什么。这就体现了平时没有记录习惯的缺点。既然搞了大半天的博客搭建就写写我的搭建过程吧，正好也当做练手。<br>简单介绍一下，Hexo是一个基于 node.js的快速生成静态博客的开源框架,支持 Markdown和大多数 Octopress插件,一个命令即可部署到 Github页面、 Giteee、 Heroku等,强大的APl,可无限扩展,拥有数百个主题和插件。Hexo也是一个发布在GitHub上的开源项目，可见<a href="https://github.com/hexojs/hexo">hexojs&#x2F;hexo</a>，作者是个台湾人，对中文还是友好的。</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><h2 id="安装配置git"><a href="#安装配置git" class="headerlink" title="安装配置git"></a>安装配置git</h2><blockquote>
+<p>windows不自带Git工具，需要到官网下载：<a href="https://git-scm.com/download/">Git下载</a>,安装自己指定目录，一路next就行了。安装后测试是否安装成功。在桌面或者任何文件夹鼠标右击选择Git Bash Here，或者在菜单里打开Git Bash，输入<code>git -v</code>得到版本号即成功。以后在Git Bash里输入命令就行<br>另一种就是设置环境变量在命令提示符cmd里打开，不会百度吧.测试同样输入<code>git -v</code>得到版本号即成功。我习惯cmd，后续默认使用cmd，<code>Git Bash</code>同样操作<br><img src="https://img-blog.csdnimg.cn/fb440daa37ea4298a3239103fd486e22.png" alt="git环境变量设置"></p>
+</blockquote>
+<blockquote>
+<p>因为后续要白嫖GitHub域名，这里默认你要部署在github上的，不是的话找其他博客吧，哈哈哈。首先要有github账号，没有注册一个吧。在<code>git bash</code>或者cmd里设置以下信息。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.name &quot;GitHub用户名&quot;</span><br><span class="line">git config --global user.email &quot;GitHub注册邮箱&quot;</span><br></pre></td></tr></table></figure>
+<p>接下来生成ssh密钥文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;GitHub注册邮箱&quot;</span><br></pre></td></tr></table></figure>
+<p>接下来三次回车，在C:\Users\你的名字.ssh文件夹里打开id_rsa.pub，复制全部内容。<br>打开GitHub的<a href="https://github.com/settings/keys"><code>SSH and GPG Keys</code></a>，添加new SSH Key，标题任填，内容粘贴刚刚复制的，点击添加。<br>然后需要在Git Bash或cmd里检测GitHub SSH是否设置成功，输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果说显示以下，那就说明成功了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Hi xxxxxx! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
+<p>这里第一次正常成功后来，会出现</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh: connect to host github.com port 22: Connection refused</span><br></pre></td></tr></table></figure>
+<p>在C:\Users\你的名字.ssh文件夹打开config文件加入,是切换连接端口吧</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">   Hostname ssh.github.com</span><br><span class="line">   Port 443</span><br></pre></td></tr></table></figure>
+<p>输入验证</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>这个设置密钥简单来说就是做个验证，之后往github上传不用密码验证。</p>
+<h2 id="安装Nodes-js"><a href="#安装Nodes-js" class="headerlink" title="安装Nodes.js"></a>安装Nodes.js</h2><p>前往官网：<a href="https://nodejs.org/en/download/">Node.js</a>下载安装LTS稳定版就好，按照默认操作安装，同上使用cmd的需要设置环境变量<br><img src="https://img-blog.csdnimg.cn/eaa72af5680b4a1db362754933ea9bb5.png" alt="node环境变量设置"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line"># 检测Node.js是否安装成功</span><br><span class="line">npm -v</span><br><span class="line"># 检测npm是否安装成功</span><br></pre></td></tr></table></figure>
+<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>在需要的位置新建博客文件夹，名字任意，这里以myblog为例。所有后续的一些东西都会在这里，依次输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line"># npm命令安装Hexo,这里有的教程会让安装cnpm使用国内的源下载，我觉得治标不治本吧，因为后边还是要git clone的，不科学上网，网速就随缘。</span><br><span class="line">hexo init </span><br><span class="line"># 初始化博客</span><br></pre></td></tr></table></figure>
+<p>这里实际上网站完成了本地搭建，如果直接输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo g</span><br><span class="line"># 或者hexo generate，生成本地网站静态文件</span><br><span class="line">hexo s</span><br><span class="line"># 或者hexo server，启动服务预览，接下来出现以下内容</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000 . Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
+<p>浏览器里输入<code>http://localhost:4000</code> ，就可以预览效果了。默认的有篇hello world博客，效果很丑。。。有新设置或写一个新博客了就可以hexo s，本地预览一下在发布</p>
+<p>可以先自己写一个测试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo n &quot;我的第一篇博客&quot;</span><br><span class="line"># 会在/source/_posts文件夹里生成我的第一篇博客.md文件，可以自选Markdown编辑器编辑写一些东西</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<p>进入本地预览就有自己写的博客内容了</p>
+<h1 id="发布到github"><a href="#发布到github" class="headerlink" title="发布到github"></a>发布到github</h1><blockquote>
+<p>之前只是本地预览，要的效果是其他任意计算机都能访问<br>首先github新建个人仓库，New repository，仓库名格式为：xxx.github.io。这里xxx为你github名字的小写(各种教程都是这样写的，其他会404)，其他默认就好,成功如图<br><img src="https://img-blog.csdnimg.cn/600ee58a1f3f4f9fa4ec8d64072d687f.png" alt="默认仓库样式"><br>然后先进行一些配置，在&#x2F;myblog根目录下有站点配置文件：<code>_config.yml</code>有vs code编辑最好，用记事本也行吧，感觉容易出错。最下边修改为：主要设置让hexo知道上传到哪里</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    type: git</span><br><span class="line">    repo: https://github.com/xxxx/xxxx.github.io.git</span><br><span class="line">	#这里上图中仓库图片ssh后边的链接</span><br><span class="line">    branch: master</span><br></pre></td></tr></table></figure>
+<p>再次部署：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean # 清除缓存</span><br><span class="line">hexo g</span><br><span class="line">hexo d #上传到github仓库</span><br></pre></td></tr></table></figure>
+<p>现在就可以使用xxxx.github.io访问博客啦。<br>这里也是比较丑。可以换主题加美化，后边应该会在简单写写吧，美化花里胡哨的太多了，哈哈哈</p>
+<h1 id="其他一些问题"><a href="#其他一些问题" class="headerlink" title="其他一些问题"></a>其他一些问题</h1><p>如果不科学上网的话，某些下载会慢的离谱。科学上网的话，因为cmd命令行不属于应用层？正常的全局代理也没用，需要在命令行窗口设置代理。git bash不知道什么情况。需要的话自行百度设置吧。</p>
+<p>唉，写到这里，真的感受到了自己会和写出来的差别，各种问题。有些东西想事无巨细的写出来，比如科学上网的设置啥的，会的人完全不用教，不会的就不手把手感觉就学不会，是我了，哈哈哈哈。之前看一些教程也是一句带过，完全不知道怎么搜，现在的我也懒得写这些。。。。</p>
+]]></content>
+      <categories>
+        <category>个人博客搭建</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>博客搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo博客多端同步</title>
+    <url>/2022/08/18/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%BF%9B%E9%98%B6/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>写一下换主题，和简单的主题设置吧。就是最基础的那种美化设置，其他花里胡哨的自行搜索设置吧。主要重点是hexo的多端同步，也就是多个设备能同步信息，都能写博客上传。虽然平时主要用实验室电脑写，暂时用不到，先学习记录一下，以便后续更换设备。</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="主题简单设置"><a href="#主题简单设置" class="headerlink" title="主题简单设置"></a>主题简单设置</h1><p>主要修改博客设置站点，根目录下的<code>_config.yml</code>文件,以及主题文件夹的下的<code>_config.yml</code>文件，每个人修改的审美不一样，这里就放一些参考吧。懒到起飞。。。<br>正常博客会显示全文，一个最简单的方法就是在博客中间加上<code>&lt;!-- more --&gt;</code>,就会只显示在这之前的内容了，后边的会折叠，这也是官方推荐的方法。<br>##换主题<br>在github搜<code>hexo-theme</code>，会有大堆的主题，这里以next主题为例，<br><img src="https://img-blog.csdnimg.cn/7fee706e18a5406ba499a59bcca672ff.png" alt="主题搜索"><br>为了后续多端同步方便，推荐先fork到自己仓库，然后在clone。clone到博客themes文件夹下，修改博客设置站点，根目录下的<code>_config.yml</code>文件，<code>theme: themes文件夹下的主题文件夹名称</code><br><img src="https://img-blog.csdnimg.cn/802ad808ad7a49da96c38280e7ada7db.png" alt="主题修改"><br>然后hexo clean，hexo g 就可以。<br>其他一些主题美化，直接搜hexo-next主题美化，各种设置，这里不多说了。<br>参考：<br><a href="https://blog.csdn.net/Wonz5130/article/details/84666519">解决 Hexo 搭建博客显示不出分类、标签问题</a><br><a href="https://zhuanlan.zhihu.com/p/185015237">hexo之主题优化篇</a><br><a href="https://blog.csdn.net/nightmare_dimple/article/details/86661502">Hexo博客优化之Next主题美化</a></p>
+<h1 id="多端同步"><a href="#多端同步" class="headerlink" title="多端同步"></a>多端同步</h1><blockquote>
+<p>hexo上传到github的只是生成的静态网页文件，也就是pubilc文件夹中的文件，不包含源文件。主要思路就是利用git的分支管理，将源文件上传到github的另一个分支。</p>
+</blockquote>
+<h2 id="上传分支"><a href="#上传分支" class="headerlink" title="上传分支"></a>上传分支</h2><blockquote>
+<p>在博客根目录执行</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git remote add origin git@github.com:lanpangzhi/lanpangzhi.github.io.git  # 添加远程仓库 注意这里要添加你自己的仓库 lanpangzhi 换成你自己的用户名，设置推送的目的仓库，命名为origin</span><br><span class="line">git checkout -b hexo            # 新建hexo分支并切换到hexo分支,后续同步就不需要这一步了</span><br><span class="line">git add .              # 所有变化提交到暂存区</span><br><span class="line">git commit -m &quot;解决同步问题&quot;  # 提交文件，后边提交日志可改为同步日期</span><br><span class="line">git push origin hexo   # 推送hexo分支</span><br></pre></td></tr></table></figure>
+<p>成功之后，github上就有博客源文件了。master分支是上传的静态网页文件，hexo分支是源文件。<br><img src="https://img-blog.csdnimg.cn/9914b22a112a4174bb9619eb2e1bf5c4.png" alt="hexo源文件"><br>推荐把hexo设置为默认分支。默认推送到hexo分支，每次推送或克隆指定分支也行，麻烦一点。<br><img src="https://img-blog.csdnimg.cn/3d1d3e7db1cc4967b65b9a576e22483a.png" alt="hexo设为默认分支"></p>
+<h2 id="git-submodule-实现第三方主题同步"><a href="#git-submodule-实现第三方主题同步" class="headerlink" title="git submodule 实现第三方主题同步"></a>git submodule 实现第三方主题同步</h2><blockquote>
+<p>因为之前是直接把第三方主题克隆到博客目录，有什么改动是无法推送到作者Git仓库的，这个时候需要把第三方主题的项目Fork到自己仓库，自己账号下生成一个同名的仓库，并对应一个url，我们应该git clone自己账号下仓库的url。这里有些问题，因为之前是直接clone作者仓库的主题，在fork到自己仓库，修改主题文件后在上传到自己fork仓库时会报错，搜了一圈看不懂怎么解决。。。用了个笨方法直接将本地的主题文件全部上传的自己新建的仓库，然后在新电脑上直接clone下来。在换主题前就fork到自己仓库，clone修改，然后上传commit就没这种问题了。<br><img src="https://img-blog.csdnimg.cn/0fcf9a2939af413ba646f2255dcb324f.png" alt="fork自己仓库"></p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git submodule add git@github.com:xxxxxxx/hexo-theme-next.git themes/next </span><br></pre></td></tr></table></figure>
+<p>把自己仓库下面第三方主题添加到Git子模块，** 注 : themes&#x2F;next 这里的目录是因为我用的next主题才会写themes&#x2F;next 如果你用的不是next请把next替换成你的第三方主题文件夹名字。**<br>博客的根目录会多一个.gitmodules文件,这是一个配置文件，保存了项目 URL 和你拉取到的本地子目录。<br>这就添加成功了，然后执行如下操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add .              # 所有变化提交到暂存区</span><br><span class="line">git commit -m &quot;添加第三方主题Git子模块&quot;  # 提交文件</span><br><span class="line">git push origin hexo   # 推送hexo分支</span><br></pre></td></tr></table></figure>
+<h1 id="更换电脑同步"><a href="#更换电脑同步" class="headerlink" title="更换电脑同步"></a>更换电脑同步</h1><h2 id="同步博客"><a href="#同步博客" class="headerlink" title="同步博客"></a>同步博客</h2><blockquote>
+<p>前提要有node和git，执行</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g  # 先安装hexo的脚手架</span><br><span class="line">git clone git@github.com:xxxxx/xxxxx.github.io.git  # 下载项目，因为hexo 是默认分支，所以这里直接会下载hexo分支,或者-b hexo指定分支</span><br><span class="line">npm i # 安装依赖</span><br><span class="line">hexo s # 启动服务器</span><br></pre></td></tr></table></figure>
+<p>每次写完文章部署网站后，再执行如下操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add .             # 所有变化提交到暂存区</span><br><span class="line">git commit -m &quot;新增xxx文章&quot;      # 提交文件</span><br><span class="line">git push origin hexo           # 推送hexo分支</span><br></pre></td></tr></table></figure>
+<h2 id="同步第三方主题"><a href="#同步第三方主题" class="headerlink" title="同步第三方主题"></a>同步第三方主题</h2><p>在博客根目录执行如下操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git submodule init    # 初始化本地配置文件</span><br><span class="line">git submodule update    # 拉取子模块</span><br></pre></td></tr></table></figure>
+<p>如果第三方主题有修改的，修改完成后在第三方主题目录执行。这里上传需要切换仓库，因为上传的是你fork自己仓库的主题仓库。<code>git remote add theme git@github.com:xxxxxx/hexo-theme-next.github.io.git</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">git add .             # 所有变化提交到暂存区</span><br><span class="line">git commit -m &quot;修改主题xxxx&quot;      # 提交文件</span><br><span class="line">git push theme master       # 推送master分支</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://segmentfault.com/a/1190000019459014?utm_source=tag-newest">Hexo博客多端同步问题</a>
+    </p>
+]]></content>
+      <categories>
+        <category>个人博客搭建</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>博客搭建</tag>
+        <tag>博客设置及多端同步</tag>
+      </tags>
+  </entry>
+</search>
